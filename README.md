@@ -2,6 +2,8 @@
 
 ClawMaven is a pre-deployment AI agent governance platform that helps teams ship AI agents safely. It audits your agent configurations for governance gaps — missing approval gates, uncapped budgets, unauthenticated tool connections, absent audit logging — scores your overall governance posture on an A–F scale, and generates signed trust manifests that travel with your deployment artifact. ClawMaven connects directly to your Claude Code environment via MCP, so governance checks happen where you build, not after you ship.
 
+ClawMaven governs the AI agents you build, not the coding tool you build them with. Existing governance plugins like protect-mcp secure your Claude Code session — signing tool calls and enforcing Cedar policies within your editor. ClawMaven operates upstream: it audits, scores, and validates the governance posture of the agents your team ships to production. Pre-deployment governance design, not runtime enforcement.
+
 ## Installation
 
 ```
