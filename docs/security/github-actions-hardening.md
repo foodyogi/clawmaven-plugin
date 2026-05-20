@@ -35,15 +35,15 @@ The local CLI uses the same rules as the action, so a clean local run will match
 
 When this repo grows a JavaScript dependency surface (it doesn't have one today), use pnpm and configure a **minimum release age** of 4320 minutes (3 days). This is the single most effective mitigation against the "ten-minutes-after-publish" supply-chain attack pattern, where a compromised maintainer publishes a malicious version that gets pulled into CI before anyone notices.
 
-Commit this to the repo so CI, local dev, and agent-driven workflows (Claude Code, Cursor, Replit, Lovable) all honor it:
+Commit this to the repo so CI, local dev, and agent-driven workflows (Claude Code, Cursor, Replit, Lovable) all honor it. The setting is **pnpm-specific** (pnpm ≥ 10) — yarn and bun do not honor it, and npm's support is recent and version-dependent. If you switch off pnpm later, the setting silently stops protecting you.
 
-`.npmrc` (preferred — applies to every pnpm/npm-compatible client):
+`.npmrc`:
 
 ```ini
 minimum-release-age=4320
 ```
 
-Or in `package.json` for pnpm ≥ 10 specifically:
+Or in `package.json`:
 
 ```json
 {
@@ -55,8 +55,8 @@ Or in `package.json` for pnpm ≥ 10 specifically:
 
 Notes:
 
-- 4320 minutes = 72 hours. Tune down for individual trusted packages with `minimumReleaseAgeExclude` if a 3-day window is too painful, but do not lower the global default.
-- The setting is honored at install time by pnpm; CI must also use pnpm (not `npm`/`yarn`/`bun`) for it to take effect.
+- 4320 minutes = 72 hours. If a specific trusted package needs to bypass the delay, use pnpm's `minimumReleaseAgeExclude` for that package rather than lowering the global default.
+- The setting is honored at install time. CI must use the same package manager that wrote the config.
 
 ---
 
@@ -115,7 +115,7 @@ Other secret-handling rules for this repo:
 
 GitHub Actions resolve by ref at run time. A tag like `@v4` is mutable — the owner can re-point it at a new commit, which is fine for trusted publishers but a known attack vector when an account is compromised (`tj-actions/changed-files` in 2025 is the textbook case).
 
-This repo currently uses tag references (`@v4`, `@v0.2.0`) because:
+This repo currently uses tag references (`@v4` for `actions/checkout`, `@v0.1.2` for `zizmorcore/zizmor-action`) because:
 
 - The number of third-party actions in play is tiny (`actions/checkout`, `zizmorcore/zizmor-action`, and `SocketDev/action` when JS is added).
 - Tag references let Dependabot bump them with a one-line PR. SHA pins break that flow unless you also configure Dependabot's `target-version` strategy.
@@ -169,7 +169,7 @@ Symptoms and where to look first:
 
 - **`ERR_PNPM_OUTDATED_LOCKFILE`** — the lockfile and `package.json` disagree. Run `pnpm install` locally, commit the updated lockfile, push. Do not "fix" this in CI by dropping `--frozen-lockfile`.
 - **`sfw` blocks a package you trust** — Socket logs the rule that fired in the install output. If the block is a false positive, file with Socket *and* temporarily document the bypass in the workflow file (commented `# sfw bypass: socket issue #NNN`) rather than removing `sfw` wholesale.
-- **`minimum-release-age` rejects a package** — pnpm prints "package X version Y was published less than 4320 minutes ago." Either wait, or add an `minimumReleaseAgeExclude` entry for that specific package with a code-review note.
+- **`minimum-release-age` rejects a package** — pnpm refuses to install a version that was published inside the configured window. Either wait, or add a `minimumReleaseAgeExclude` entry for that specific package with a code-review note explaining why the bypass is safe.
 - **`actions/checkout` 401** — almost always `permissions: contents: read` was forgotten and the default token has no repo access. Add it.
 - **zizmor flags a new finding** — read the rule doc (`zizmor --help` and https://docs.zizmor.sh/audits/), fix the underlying issue. Suppressing with `# zizmor: ignore[rule-id]` is allowed but should carry a one-line comment explaining why.
 - **SARIF upload fails with "Resource not accessible by integration"** — the job is missing `security-events: write`, or you're on a private repo without GitHub Advanced Security.
