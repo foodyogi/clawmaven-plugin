@@ -115,18 +115,18 @@ Other secret-handling rules for this repo:
 
 GitHub Actions resolve by ref at run time. A tag like `@v4` is mutable — the owner can re-point it at a new commit, which is fine for trusted publishers but a known attack vector when an account is compromised (`tj-actions/changed-files` in 2025 is the textbook case).
 
-This repo currently uses tag references (`@v4` for `actions/checkout`, `@v0.1.2` for `zizmorcore/zizmor-action`) because:
-
-- The number of third-party actions in play is tiny (`actions/checkout`, `zizmorcore/zizmor-action`, and `SocketDev/action` when JS is added).
-- Tag references let Dependabot bump them with a one-line PR. SHA pins break that flow unless you also configure Dependabot's `target-version` strategy.
-
-**Recommendation:** if you enable Dependabot for `github-actions` (which you should — see §8), keep tag references. If you do not, pin every third-party action to a full commit SHA and add a comment with the human-readable version:
+**This repo pins every third-party action to a full commit SHA**, with the human-readable version in a trailing comment so Dependabot can bump it. zizmor's `unpinned-uses` rule enforces this on every PR; an unpinned `uses:` line will fail CI.
 
 ```yaml
-- uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  # v4.1.1
+- uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+- uses: zizmorcore/zizmor-action@5f14fd08f7cf1cb1609c1e344975f152c7ee938d  # v0.5.6
 ```
 
-`actions/*` (first-party) are lower-risk than third-party actions but are not exempt — the 2025 incidents all involved the same threat model.
+Notes:
+
+- The trailing `# vX.Y.Z` comment is **not cosmetic** — Dependabot reads it to compute the next bump. Don't drop it. Don't put anything else on that line.
+- `actions/*` (first-party) are lower-risk than third-party actions but get the same treatment. The 2025 incidents all involved the same threat model.
+- To resolve a tag to its SHA from the GitHub UI: open the action's `Releases` page, click the tag, the SHA is shown next to the commit hash (or use `git ls-remote https://github.com/OWNER/REPO refs/tags/vX.Y.Z`).
 
 ---
 
