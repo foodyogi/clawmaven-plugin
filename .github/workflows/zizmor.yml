@@ -1,0 +1,44 @@
+# Static analysis for GitHub Actions workflows using zizmor.
+# Scans .github/workflows/*.yml for common CI/CD security issues
+# (excessive permissions, dangerous triggers, template injection, etc.).
+#
+# Runs on pull_request (NOT pull_request_target) so untrusted PR code
+# is executed with the fork's read-only GITHUB_TOKEN and no access to
+# repository secrets. The workflow itself does not reference any secrets.
+name: zizmor
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+# Default to read-only. Each job opts in to anything more.
+permissions:
+  contents: read
+
+jobs:
+  zizmor:
+    name: zizmor
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      # Required so zizmor-action can upload SARIF to GitHub code scanning.
+      # If you do not have GitHub Advanced Security on a private repo (it is
+      # free on public repos), drop this permission and the SARIF upload
+      # step inside the action will be skipped.
+      security-events: write
+    steps:
+      - name: Checkout
+        # Pinned to commit SHA per repo policy (zizmor unpinned-uses rule).
+        # The trailing version comment is what Dependabot reads to propose
+        # bumps; do not remove it.
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+        with:
+          # Don't leave the GITHUB_TOKEN sitting in .git/config for later steps.
+          persist-credentials: false
+
+      - name: Run zizmor
+        # Pinned to commit SHA per repo policy (zizmor unpinned-uses rule).
+        # Dependabot will raise PRs to bump this; the version comment is
+        # required for Dependabot to recognize and update the pin.
+        uses: zizmorcore/zizmor-action@5f14fd08f7cf1cb1609c1e344975f152c7ee938d  # v0.5.6
