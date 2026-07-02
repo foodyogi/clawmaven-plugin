@@ -1,17 +1,11 @@
 {
   "mcpServers": {
     "clawmaven": {
-      "type": "url",
+      "type": "http",
       "url": "https://clawmaven.com/mcp",
       "headers": {
         "Authorization": "Bearer ${CLAWMAVEN_TOKEN}"
-      },
-      "tools": [
-        "get_posture_score",
-        "apply_agent_governance",
-        "enforce_budget_cap",
-        "generate_trust_manifest"
-      ]
+      }
     }
   }
 }
