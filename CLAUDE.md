@@ -7,14 +7,27 @@ A Claude Code plugin that surfaces ClawMaven's pre-deployment AI agent governanc
 ## Repo structure
 
 ```
-.claude-plugin/plugin.json   — plugin manifest (name, version, author, homepage)
-.mcp.json                    — MCP server definition (clawmaven server, 4 tools)
+.claude-plugin/plugin.json   — Claude Code plugin manifest (name, version, author, homepage)
+.mcp.json                    — MCP server definition for Claude Code (clawmaven server, 4 tools)
+.cursor-plugin/plugin.json   — Cursor marketplace manifest
+mcp.json                     — MCP server definition for Cursor (same content as .mcp.json)
 skills/
   governance-audit/SKILL.md  — /clawmaven:governance-audit slash command
   posture-score/SKILL.md     — /clawmaven:posture-score slash command
   trust-manifest/SKILL.md    — /clawmaven:trust-manifest slash command
   config/SKILL.md            — contextual (no slash command), model-invoked
+docs/security/               — GitHub Actions / supply-chain hardening conventions
+.github/workflows/zizmor.yml — CI: zizmor static analysis of workflows
 ```
+
+The Claude and Cursor manifests are parallel surfaces: a version bump or description change in `.claude-plugin/plugin.json` must be mirrored in `.cursor-plugin/plugin.json`, and `.mcp.json` / `mcp.json` must stay identical.
+
+## Commands
+
+There is no build, test runner, or package manager — the plugin is markdown skills plus JSON manifests. Useful checks:
+
+- Validate a manifest after editing: `python3 -m json.tool < .mcp.json`
+- Lint workflows locally (same rules as CI): `pipx install zizmor && zizmor .github/workflows/`
 
 ## Skills
 
@@ -40,6 +53,15 @@ Skills reference these as `mcp__clawmaven__*` in `allowed-tools`.
 - The `config` skill must not call MCP tools automatically; it surfaces findings inline without blocking the user's primary task.
 - `trust-manifest` writes `trust-manifest.json` but must confirm the save location with the user first.
 - If `CLAWMAVEN_TOKEN` is unset, surface a clear error with the token URL rather than failing silently.
+
+## CI / workflow conventions
+
+Full details in `docs/security/github-actions-hardening.md`. The rules that apply to every workflow change:
+
+- Pin every action to a full commit SHA with a trailing `# vX.Y.Z` comment (Dependabot reads it — don't drop it). zizmor fails CI on unpinned `uses:`.
+- Set `permissions: contents: read` at the top of every workflow; opt in per-job only when needed.
+- Use `on: pull_request`, never `pull_request_target`.
+- `CLAWMAVEN_TOKEN` is a user-side editor secret — it must never appear in GitHub Actions secrets or be referenced by any workflow.
 
 ## Positioning
 
