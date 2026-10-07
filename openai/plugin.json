@@ -1,0 +1,30 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "clawmaven",
+  "version": "0.1.0",
+  "description": "Review AI agent governance, score saved profiles, check budgets, and generate signed deployment trust manifests with ClawMaven.",
+  "author": {"name": "Master 22 Solutions", "url": "https://clawmaven.com"},
+  "homepage": "https://clawmaven.com",
+  "repository": "https://github.com/foodyogi/clawmaven-plugin",
+  "license": "MIT",
+  "keywords": ["governance", "agents", "audit", "trust-manifest"],
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "ClawMaven",
+        "shortDescription": "Review governance before deploying AI agents",
+        "longDescription": "Inspect agent configurations, retrieve posture scores and effective policies from saved ClawMaven profiles, check spend against budget caps, and generate signed trust manifests for deployment.",
+        "developerName": "Master 22 Solutions",
+        "category": "Developer Tools",
+        "capabilities": ["Governance review", "Posture scoring", "Budget checks", "Trust manifests"],
+        "websiteURL": "https://clawmaven.com",
+        "privacyPolicyURL": "https://clawmaven.com/privacy",
+        "defaultPrompt": [
+          "Review my agent configuration for governance gaps.",
+          "Get the posture score for my ClawMaven governance profile.",
+          "Generate a trust manifest for my agent using its saved governance profile."
+        ]
+      }
+    }
+  }
+}
