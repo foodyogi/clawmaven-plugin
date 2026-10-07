@@ -1,4 +1,4 @@
-"""Build the OpenAI draft ZIP from an explicit file list, excluding credentials."""
+"""Build the OpenAI plugin ZIP from an explicit file list, excluding credentials."""
 
 import argparse
 import json
@@ -8,7 +8,12 @@ import zipfile
 
 REPO = Path(__file__).resolve().parents[1]
 SKILLS = ("governance-audit", "posture-score", "trust-manifest", "budget-check")
-FILES = ("plugin.json", "mcp.json") + tuple(f"skills/{name}/SKILL.md" for name in SKILLS)
+FILES = ("plugin.json", "mcp.json", "assets/logo.png") + tuple(
+    f"skills/{name}/SKILL.md" for name in SKILLS
+)
+# Listing limits from OpenAI's submission docs ("Listing metadata").
+TEXT_LIMITS = {"displayName": 30, "shortDescription": 30, "longDescription": 4000, "developerName": 80}
+URL_FIELDS = ("websiteURL", "supportURL", "privacyPolicyURL", "termsOfServiceURL")
 
 
 def validate(source):
@@ -27,8 +32,17 @@ def validate(source):
     if manifest.get("$schema") != "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json":
         raise ValueError("Expected portable Agent Plugins schema")
     interface = manifest["extensions"]["com.openai"]["interface"]
-    if not interface.get("displayName") or not interface.get("shortDescription"):
-        raise ValueError("Missing OpenAI listing metadata")
+    for field, limit in TEXT_LIMITS.items():
+        if not 0 < len(interface.get(field, "")) <= limit:
+            raise ValueError(f"{field} must be 1-{limit} characters")
+    for field in URL_FIELDS:
+        if not interface.get(field, "").startswith("https://"):
+            raise ValueError(f"{field} must be an HTTPS URL")
+    prompts = interface.get("defaultPrompt", [])
+    if len(prompts) > 3 or any(len(prompt) > 128 for prompt in prompts):
+        raise ValueError("Use at most three default prompts of 128 characters or fewer")
+    if interface.get("logo") != "./assets/logo.png":
+        raise ValueError("Expected logo at ./assets/logo.png")
     mcp = json.loads((source / "mcp.json").read_text())
     expected = {"clawmaven": {"type": "streamable-http", "url": "https://clawmaven.com/mcp"}}
     if mcp.get("mcpServers") != expected:
@@ -58,7 +72,7 @@ def main():
     args = parser.parse_args()
     manifest = build(REPO / "openai", args.output)
     print(f"Built {args.output}: {manifest['name']} {manifest['version']} (4 skills)")
-    print("Draft only; authenticated ChatGPT testing and public review remain pending.")
+    print("Upload this ZIP in the OpenAI portal; see docs/openai-readiness.md for review steps.")
 
 
 if __name__ == "__main__":

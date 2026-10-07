@@ -1,10 +1,10 @@
 # ClawMaven Plugin for Claude Code
 
-An OpenAI plugin draft for ChatGPT and Codex is available in [`openai/`](openai/).
-It uses the existing hosted ClawMaven MCP service with governance review,
-posture scoring, budget checks, and trust manifest skills. See
+An OpenAI plugin for ChatGPT and Codex is available in [`openai/`](openai/).
+It uses the hosted ClawMaven MCP service with posture scoring, effective policy
+lookup, budget checks, and trust manifest skills. See
 [`docs/openai-readiness.md`](docs/openai-readiness.md) for packaging instructions
-and the authentication work required before ChatGPT testing and public submission.
+and submission status.
 
 ClawMaven is a pre-deployment AI agent governance platform that helps teams ship AI agents safely. It audits your agent configurations for governance gaps — missing approval gates, uncapped budgets, unauthenticated tool connections, absent audit logging — scores your overall governance posture on an A–F scale, and generates signed trust manifests that travel with your deployment artifact. ClawMaven connects directly to your Claude Code environment via MCP, so governance checks happen where you build, not after you ship.
 

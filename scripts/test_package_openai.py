@@ -42,6 +42,23 @@ class PackageTests(unittest.TestCase):
             build(self.source, self.output)
         self.assertFalse(self.output.exists())
 
+    def test_listing_metadata_meets_submission_limits(self):
+        build(self.source, self.output)
+        path = self.source / "plugin.json"
+        manifest = json.loads(path.read_text())
+        manifest["extensions"]["com.openai"]["interface"]["shortDescription"] = "x" * 31
+        path.write_text(json.dumps(manifest))
+        with self.assertRaises(ValueError):
+            build(self.source, self.root / "too-long.zip")
+
+    def test_logo_is_shipped_and_required(self):
+        build(self.source, self.output)
+        with zipfile.ZipFile(self.output) as archive:
+            self.assertIn("assets/logo.png", archive.namelist())
+        (self.source / "assets" / "logo.png").unlink()
+        with self.assertRaises(ValueError):
+            build(self.source, self.root / "no-logo.zip")
+
     def test_symlink_escape_is_rejected(self):
         directory = self.source / "skills" / "budget-check"
         external = self.root / "external"
