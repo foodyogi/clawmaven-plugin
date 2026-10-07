@@ -17,6 +17,13 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    cooldown:
+      # Wait at least 7 days after a release before proposing it. Closes the
+      # "ten-minutes-after-publish" supply-chain window on github-actions,
+      # the Dependabot-side analogue of pnpm's minimum-release-age in
+      # docs/security/github-actions-hardening.md §2. Satisfies zizmor's
+      # dependabot-cooldown audit.
+      default-days: 7
     open-pull-requests-limit: 5
     commit-message:
       prefix: ci
