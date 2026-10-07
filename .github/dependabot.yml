@@ -3,10 +3,10 @@
 #
 # How this interacts with the SHA-pinning policy in
 # docs/security/github-actions-hardening.md §6:
-# Dependabot reads the trailing `# vX.Y.Z` comment on each `uses:` line,
-# resolves the new tag to its commit SHA, and updates both the SHA and
-# the version comment in the same PR. The SHA-pin policy is preserved;
-# no manual intervention is needed on routine bumps.
+# Dependabot updates the SHA on each `uses:` line but can leave the
+# trailing `# vX.Y.Z` comment stale (see dependabot-core#14716). Verify
+# the SHA and the version comment in every Dependabot PR before merging
+# — the §6 action-pinning policy requires both to be in sync.
 #
 # zizmor runs on every pull_request, including Dependabot's, so an
 # unpinned update would fail CI the same way a human-authored one would.
