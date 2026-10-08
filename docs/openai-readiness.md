@@ -1,4 +1,4 @@
-# OpenAI plugin: 0.1.4
+# OpenAI plugin: 0.1.5
 
 ## Status
 
@@ -40,7 +40,7 @@ Python 3.9 or later, without third-party dependencies:
 
 ```sh
 python3 -m unittest discover -s scripts -p 'test_*.py'
-python3 scripts/package_openai.py --output /absolute/output/path/clawmaven-openai-0.1.4.zip
+python3 scripts/package_openai.py --output /absolute/output/path/clawmaven-openai-0.1.5.zip
 ```
 
 Or rebuild `dist/clawmaven-openai-<version>.zip` and the listing icon in one
@@ -115,6 +115,12 @@ No ClawMaven tool should be called.
 | 8 | Draft a short cold email introducing my company to a potential customer. | Answered without ClawMaven tools. |
 
 ## Release notes
+
+0.1.5 (2026-10-08): `mcp.json` drops the `oauth` block and validates against
+its Agent Plugins schema again; the OpenAI console dropped the MCP server when
+it was present. ChatGPT now registers through Client ID Metadata Documents
+(ClawMaven 1.10.30), so no client ID is configured in the package. The packager
+rejects any `oauth` or `headers` key.
 
 0.1.4 (2026-10-08): `mcp.json` declares ClawMaven's predefined public OAuth
 client (`"oauth": {"clientId": "clawmaven-openai"}`, PKCE, no secret) so the
