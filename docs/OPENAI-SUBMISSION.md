@@ -1,4 +1,4 @@
-# OpenAI plugin submission: ClawMaven 0.1.5
+# OpenAI plugin submission: ClawMaven 0.1.6
 
 Paste-ready fields for the OpenAI plugin dashboard
 ([Upload and submit](https://developers.openai.com/plugins/deploy/submission)).
@@ -9,7 +9,7 @@ Values match `openai/plugin.json`. Character counts and URL checks were run on
 
 | Item | Value |
 | --- | --- |
-| ZIP | `dist/clawmaven-openai-0.1.5.zip` |
+| ZIP | `dist/clawmaven-openai-0.1.6.zip` |
 | Rebuild | `scripts/build_openai_zip.sh` (runs the tests, rebuilds the ZIP and icon, audits the ZIP) |
 | MCP server | `https://clawmaven.com/mcp` (Streamable HTTP, OAuth), declared in `mcp.json` |
 | OAuth client | None in the package. ChatGPT registers through a Client ID Metadata Document (`client_id_metadata_document_supported`, ClawMaven 1.10.30+): public client, PKCE S256, token auth `none`, no client secret |
@@ -48,12 +48,13 @@ Master 22 Solutions LLC
 Developer Tools
 ```
 
-**Capabilities** (Codex only; 4 labels, each at most 120 characters)
+**Capabilities** (Codex only; 5 labels, each at most 120 characters)
 
 ```
 Posture scores
 Effective policy lookup
-Budget cap checks
+Per-run budget checks
+Monthly spend recording
 Signed trust manifests
 ```
 
@@ -109,7 +110,9 @@ ClawMaven claim rules:
 
 Taken from the eight cases verified live in ChatGPT
 (`docs/openai-readiness.md`) with profile `05dea91f-bbbe-4ecc-951b-bdca2a0da476`
-and agent `clawmaven-sender`. No case records monthly spend. If the reviewer
+and agent `clawmaven-sender`. Case 3 now expects `get_effective_policy`
+(ClawMaven 1.10.31) and must be re-run before submission. No case records
+monthly spend. If the reviewer
 account uses a different sample profile, replace the profile ID in each prompt.
 
 ### Positive (5)
@@ -132,8 +135,8 @@ account uses a different sample profile, replace the profile ID in each prompt.
 
 - description: Retrieve the effective policy a profile applies to a named agent.
 - prompt: `What tools, blocked domains, and budget caps apply to agent clawmaven-sender under profile 05dea91f-bbbe-4ecc-951b-bdca2a0da476?`
-- tools_triggered: `apply_agent_governance`
-- expected_behavior: Calls `apply_agent_governance` with the profile ID and agent ID and lists the returned allowed tools, blocked domains, budget caps and autonomy level. It does not claim that enforcement was installed.
+- tools_triggered: `get_effective_policy`
+- expected_behavior: Calls the read-only `get_effective_policy` with the profile ID and agent ID and lists the returned allowed tools, blocked domains, budget caps and autonomy level. It does not claim that enforcement was installed.
 
 **4. Trust manifest**
 
@@ -147,7 +150,7 @@ account uses a different sample profile, replace the profile ID in each prompt.
 - description: Check one run's spend against the profile's per-run budget cap without recording anything.
 - prompt: `Agent clawmaven-sender spent $4.20 on this run under profile 05dea91f-bbbe-4ecc-951b-bdca2a0da476. Is it within the per-run cap?`
 - tools_triggered: `check_budget_cap`
-- expected_behavior: Calls the read-only `check_budget_cap` (not `enforce_budget_cap`) and reports `over_cap` against the $2.00 per-run cap with the returned spend and remaining amounts. Nothing is recorded. It explains that the decision is advisory and that the agent's runtime applies the cap.
+- expected_behavior: Calls the read-only `check_budget_cap` (not `record_monthly_spend`) and reports `over_cap` against the $2.00 per-run cap with the returned spend and remaining amounts. Nothing is recorded. It explains that the decision is advisory and that the agent's runtime applies the cap.
 
 ### Negative (3)
 
@@ -171,10 +174,10 @@ No ClawMaven tool should be called.
 - prompt: `Draft a short cold email introducing my company to a potential customer.`
 - expected behavior: Writes the email without calling any ClawMaven tool.
 
-## Release notes (0.1.5)
+## Release notes (0.1.6)
 
 ```
-First public release of the ClawMaven plugin. Connects to your saved ClawMaven governance profiles over OAuth to get a profile's posture score and category breakdown, retrieve the effective policy for a named agent, check a run's USD spend against the per-run budget cap with the read-only check_budget_cap, and generate an HMAC-signed trust manifest. Recording monthly spend uses enforce_budget_cap only when you explicitly ask and authorize it. ClawMaven is pre-deployment governance design: it does not monitor agents or enforce policy at runtime.
+First public release of the ClawMaven plugin. Connects to your saved ClawMaven governance profiles over OAuth to get a profile's posture score and category breakdown, retrieve the effective policy for a named agent, check a run's USD spend against the per-run budget cap with the read-only check_budget_cap, and generate an HMAC-signed trust manifest. Recording monthly spend uses record_monthly_spend only when you explicitly ask and authorize it, with an idempotency key so a retry is not counted twice. ClawMaven is pre-deployment governance design: it does not monitor agents or enforce policy at runtime.
 ```
 
 ## Reviewer sign-in (OAuth)

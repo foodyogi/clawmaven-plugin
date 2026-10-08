@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "clawmaven",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Score saved ClawMaven governance profiles, retrieve an agent's effective policy, check spend against budget caps, and generate signed trust manifests before deployment.",
   "author": {"name": "Master 22 Solutions LLC", "url": "https://clawmaven.com"},
   "homepage": "https://clawmaven.com",
@@ -16,7 +16,7 @@
         "longDescription": "Work with your saved ClawMaven governance profiles before you deploy an AI agent. Get a profile's posture score, grade, and category breakdown; retrieve the effective policy (allowed tools, blocked domains, budget caps, and autonomy level) for an agent you name; check an agent's USD spend against the profile's budget cap; and generate a signed trust manifest for deployment. Recording monthly spend requires your authorization. ClawMaven is pre-deployment governance design: it does not scan code, monitor agents, or enforce policy at runtime.",
         "developerName": "Master 22 Solutions LLC",
         "category": "Developer Tools",
-        "capabilities": ["Posture scores", "Effective policy lookup", "Budget cap checks", "Signed trust manifests"],
+        "capabilities": ["Posture scores", "Effective policy lookup", "Per-run budget checks", "Monthly spend recording", "Signed trust manifests"],
         "websiteURL": "https://clawmaven.com",
         "supportURL": "https://clawmaven.com/help",
         "privacyPolicyURL": "https://clawmaven.com/privacy",

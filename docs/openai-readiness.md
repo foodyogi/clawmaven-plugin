@@ -1,9 +1,10 @@
-# OpenAI plugin: 0.1.5
+# OpenAI plugin: 0.1.6
 
 ## Status
 
 Submission candidate. OAuth account linking is verified end to end in ChatGPT,
-all eight review test cases pass (case 5 re-verified live Oct 8 2026 with check_budget_cap), and the terms
+seven of the eight review test cases are verified live (case 3 re-run pending
+against `get_effective_policy`, ClawMaven 1.10.31), and the terms
 of service and privacy policy are live. Nothing has been submitted to OpenAI yet.
 
 The OpenAI package lives in `openai/`, separate from the Claude and Cursor
@@ -40,7 +41,7 @@ Python 3.9 or later, without third-party dependencies:
 
 ```sh
 python3 -m unittest discover -s scripts -p 'test_*.py'
-python3 scripts/package_openai.py --output /absolute/output/path/clawmaven-openai-0.1.5.zip
+python3 scripts/package_openai.py --output /absolute/output/path/clawmaven-openai-0.1.6.zip
 ```
 
 Or rebuild `dist/clawmaven-openai-<version>.zip` and the listing icon in one
@@ -62,17 +63,22 @@ the tools below. Every tool needs a saved `profileId`; all but
 | Tool | Access | Skill | Default prompt |
 | --- | --- | --- | --- |
 | `get_posture_score` | Read | posture-score | Get the posture score for my saved ClawMaven governance profile. |
-| `apply_agent_governance` | Read | governance-audit | Show the effective policy my ClawMaven governance profile applies to my agent. |
-| `generate_trust_manifest` | Read | trust-manifest | Generate a signed trust manifest for my agent from its saved ClawMaven governance profile. |
+| `get_effective_policy` | Read | governance-audit | Show the effective policy my ClawMaven governance profile applies to my agent. |
 | `check_budget_cap` | Read | budget-check | None. |
-| `enforce_budget_cap` | Write (monthly scope) | budget-check | None; recording spend needs authorization. |
+| `record_monthly_spend` | Write (idempotent with key) | budget-check | None; recording spend needs authorization. |
+| `generate_trust_manifest` | Read | trust-manifest | Generate a signed trust manifest for my agent from its saved ClawMaven governance profile. |
 
 `check_budget_cap` (ClawMaven 1.10.28) compares a run's spend with the per-run
 cap and records nothing; the skill uses it for every per-run question.
-`enforce_budget_cap` is used only when the user explicitly asks to record
-monthly spend: `scope: "monthly"` records a spend increment and requires the
-user's authorization and an idempotency key. No tool scans code, monitors agents, or
-enforces policy at runtime.
+`record_monthly_spend` (ClawMaven 1.10.31) is used only when the user explicitly
+asks to record monthly spend: it adds the increment to the month-to-date total,
+reports what remains of the monthly cap, and requires an idempotency key. It
+has no per-run mode. No tool scans code, monitors agents, or enforces policy at
+runtime; the agent's runtime applies the policy and caps.
+
+ClawMaven 1.10.31 renamed two tools. The old names still work for existing
+clients but are not listed to ChatGPT connections that use a Client ID
+Metadata Document, so the skills and test cases use only the names above.
 
 ## Readiness
 
@@ -80,7 +86,7 @@ enforces policy at runtime.
 | --- | --- |
 | Remote transport | Ready. `/mcp/info` reports Streamable HTTP and the tools above. |
 | OAuth account linking | Verified live in ChatGPT. Unauthenticated requests return 401 with a `WWW-Authenticate` Bearer challenge pointing to `/.well-known/oauth-protected-resource/mcp`. |
-| Review test cases | 8 of 8 verified live; case 5 verified live Oct 8 2026 against `check_budget_cap`. |
+| Review test cases | 7 of 8 verified live; case 3 re-run pending against `get_effective_policy` (ClawMaven 1.10.31). |
 | Terms and privacy | Live: `https://clawmaven.com/terms`, `https://clawmaven.com/privacy`. |
 | Support URL | `https://clawmaven.com/help` (live). |
 | Logo | `assets/logo.png`, 256x256 PNG. |
@@ -91,8 +97,9 @@ enforces policy at runtime.
 
 These eight cases were run and verified live in ChatGPT with profile
 `05dea91f-bbbe-4ecc-951b-bdca2a0da476` and agent `clawmaven-sender`. Case 5
-expects `check_budget_cap` and was verified live on ClawMaven 1.10.28.
-No case records monthly spend.
+expects `check_budget_cap` and was verified live on ClawMaven 1.10.28. Case 3
+now expects `get_effective_policy` and must be re-run once ClawMaven 1.10.31 is
+live. No case records monthly spend.
 
 ### Positive
 
@@ -100,7 +107,7 @@ No case records monthly spend.
 | --- | --- | --- | --- |
 | 1 | What is the posture score for profile `05dea91f-bbbe-4ecc-951b-bdca2a0da476`? | `get_posture_score` | Returned overall score, grade, and categories. |
 | 2 | What is the weakest area of profile `05dea91f-bbbe-4ecc-951b-bdca2a0da476`, and what should I fix first? | `get_posture_score` | Lowest-scoring returned category and its returned fix. |
-| 3 | What tools, blocked domains, and budget caps apply to agent `clawmaven-sender` under profile `05dea91f-bbbe-4ecc-951b-bdca2a0da476`? | `apply_agent_governance` | Returned allowed tools, blocked domains, and budget caps; no claim that enforcement was installed. |
+| 3 | What tools, blocked domains, and budget caps apply to agent `clawmaven-sender` under profile `05dea91f-bbbe-4ecc-951b-bdca2a0da476`? | `get_effective_policy` | Returned allowed tools, blocked domains, and budget caps; no claim that enforcement was installed. **Re-run pending.** |
 | 4 | Generate a signed trust manifest for agent `clawmaven-sender` using profile `05dea91f-bbbe-4ecc-951b-bdca2a0da476`. | `generate_trust_manifest` | Signed manifest with issue time and expiry. |
 | 5 | Agent `clawmaven-sender` spent $4.20 on this run under profile `05dea91f-bbbe-4ecc-951b-bdca2a0da476`. Is it within the per-run cap? | `check_budget_cap` | `over_cap` against the $2.00 per-run cap; nothing recorded. |
 
@@ -115,6 +122,13 @@ No ClawMaven tool should be called.
 | 8 | Draft a short cold email introducing my company to a potential customer. | Answered without ClawMaven tools. |
 
 ## Release notes
+
+0.1.6 (2026-10-08): Skills, test cases and capabilities use the ClawMaven
+1.10.31 tool names: `get_effective_policy` for the effective policy and
+`record_monthly_spend` (idempotency key required, no per-run mode) for
+explicitly requested monthly recording. Capabilities list per-run budget checks
+and monthly spend recording separately. `mcp.json` is unchanged. Case 3 expects
+`get_effective_policy`; re-run pending.
 
 0.1.5 (2026-10-08): `mcp.json` drops the `oauth` block and validates against
 its Agent Plugins schema again; the OpenAI console dropped the MCP server when
