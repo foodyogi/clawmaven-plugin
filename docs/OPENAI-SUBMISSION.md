@@ -109,46 +109,47 @@ ClawMaven claim rules:
 ## Test cases
 
 Taken from the eight cases verified live in ChatGPT
-(`docs/openai-readiness.md`) with profile `05dea91f-bbbe-4ecc-951b-bdca2a0da476`
-and agent `clawmaven-sender`. Case 3 now expects `get_effective_policy`
-(ClawMaven 1.10.31) and must be re-run before submission. No case records
-monthly spend. If the reviewer
-account uses a different sample profile, replace the profile ID in each prompt.
+(`docs/openai-readiness.md`) on the developer's own profile with agent
+`clawmaven-sender`. For review, the prompts use `<REVIEWER_PROFILE_ID>`: the
+"Reviewer Sample" profile that `npm run reviewer:create` prints (ClawMaven
+1.10.32), which has the same $2.00 per-run cap. Replace the placeholder with
+that ID before pasting. Case 3 now expects `get_effective_policy` (ClawMaven
+1.10.31) and must be re-run before submission. No case records monthly spend.
 
 ### Positive (5)
 
 **1. Posture score**
 
 - description: Retrieve the posture score of a saved governance profile.
-- prompt: `What is the posture score for profile 05dea91f-bbbe-4ecc-951b-bdca2a0da476?`
+- prompt: `What is the posture score for profile <REVIEWER_PROFILE_ID>?`
 - tools_triggered: `get_posture_score`
 - expected_behavior: Calls `get_posture_score` once with the profile ID and reports the returned profile name, overall score (0–100), letter grade (A–F) and per-category scores. States that this assesses the saved configuration and is not a security scan.
 
 **2. Weakest area and first fix**
 
 - description: Identify the lowest-scoring category of a profile and its recommended fix.
-- prompt: `What is the weakest area of profile 05dea91f-bbbe-4ecc-951b-bdca2a0da476, and what should I fix first?`
+- prompt: `What is the weakest area of profile <REVIEWER_PROFILE_ID>, and what should I fix first?`
 - tools_triggered: `get_posture_score`
 - expected_behavior: Calls `get_posture_score` and names the lowest-scoring returned category with the fix returned for it. It does not invent categories or fixes.
 
 **3. Effective policy for an agent**
 
 - description: Retrieve the effective policy a profile applies to a named agent.
-- prompt: `What tools, blocked domains, and budget caps apply to agent clawmaven-sender under profile 05dea91f-bbbe-4ecc-951b-bdca2a0da476?`
+- prompt: `What tools, blocked domains, and budget caps apply to agent clawmaven-sender under profile <REVIEWER_PROFILE_ID>?`
 - tools_triggered: `get_effective_policy`
 - expected_behavior: Calls the read-only `get_effective_policy` with the profile ID and agent ID and lists the returned allowed tools, blocked domains, budget caps and autonomy level. It does not claim that enforcement was installed.
 
 **4. Trust manifest**
 
 - description: Generate an HMAC-signed trust manifest for a named agent.
-- prompt: `Generate a signed trust manifest for agent clawmaven-sender using profile 05dea91f-bbbe-4ecc-951b-bdca2a0da476.`
+- prompt: `Generate a signed trust manifest for agent clawmaven-sender using profile <REVIEWER_PROFILE_ID>.`
 - tools_triggered: `generate_trust_manifest`
 - expected_behavior: Calls `generate_trust_manifest` and summarizes the returned agent, profile, posture grade, allowed tools, budget cap, issue time, expiry and signature fields. Before saving `trust-manifest.json` it asks where to save. It does not describe the manifest as proof of runtime enforcement or compliance.
 
 **5. Per-run budget check**
 
 - description: Check one run's spend against the profile's per-run budget cap without recording anything.
-- prompt: `Agent clawmaven-sender spent $4.20 on this run under profile 05dea91f-bbbe-4ecc-951b-bdca2a0da476. Is it within the per-run cap?`
+- prompt: `Agent clawmaven-sender spent $4.20 on this run under profile <REVIEWER_PROFILE_ID>. Is it within the per-run cap?`
 - tools_triggered: `check_budget_cap`
 - expected_behavior: Calls the read-only `check_budget_cap` (not `record_monthly_spend`) and reports `over_cap` against the $2.00 per-run cap with the returned spend and remaining amounts. Nothing is recorded. It explains that the decision is advisory and that the agent's runtime applies the cap.
 
@@ -191,10 +192,16 @@ this file.
 | Username / email | None. ClawMaven sign-in uses an access token, not a username and password. |
 | Credential | `<REVIEWER_CLAWMAVEN_ACCESS_TOKEN>` |
 | Workspace / tenant | None |
-| Sample profile ID | `<REVIEWER_PROFILE_ID>` (the test cases use `05dea91f-bbbe-4ecc-951b-bdca2a0da476`) |
+| Sample profile ID | `<REVIEWER_PROFILE_ID>`, printed by `npm run reviewer:create` |
 | Agent ID | `clawmaven-sender` (any label works) |
 
-Steps:
+Instructions for the reviewer (paste into the dashboard):
+
+```
+Connect ClawMaven, paste the access token on the ClawMaven authorize page, click Authorize ChatGPT and Codex to approve. Use profile <REVIEWER_PROFILE_ID>. Do not use license recovery.
+```
+
+Steps in detail:
 
 1. In ChatGPT, install the ClawMaven plugin and select **Connect**.
 2. ChatGPT opens `https://clawmaven.com/oauth/openai/authorize`. The page reads
@@ -220,10 +227,13 @@ reviewer does not need.
 
 These need you before submission:
 
-1. **Reviewer credentials.** Create a dedicated, active Builder, Team or
-   Enterprise access token (not your own), a sample profile that token can
-   read, and enter both in the dashboard. If the sample profile is not
-   `05dea91f-…`, update the five positive prompts.
+1. **Reviewer credentials.** In the ClawMaven Replit shell, run
+   `npm run reviewer:create` (ClawMaven 1.10.32 or later). It creates, or
+   reuses, a dedicated Team-tier access token labelled `openai-reviewer` and a
+   "Reviewer Sample" profile, and prints both once. Enter the token and the
+   profile ID in the dashboard's reviewer fields and replace
+   `<REVIEWER_PROFILE_ID>` in the test-case prompts. After the review, run
+   `npm run reviewer:revoke`; it disables the token and keeps the profile.
 2. **Domain verification.** The dashboard issues a challenge token. ClawMaven
    must serve it as plain text (the exact token only, not JSON) at
    `https://clawmaven.com/.well-known/openai-apps-challenge`, which needs a
