@@ -1,4 +1,4 @@
-# OpenAI plugin: 0.1.1
+# OpenAI plugin: 0.1.2
 
 ## Status
 
@@ -40,7 +40,7 @@ Python 3.9 or later, without third-party dependencies:
 
 ```sh
 python3 -m unittest discover -s scripts -p 'test_*.py'
-python3 scripts/package_openai.py --output /absolute/output/path/clawmaven-openai-0.1.1.zip
+python3 scripts/package_openai.py --output /absolute/output/path/clawmaven-openai-0.1.2.zip
 ```
 
 Only the two manifests, the logo, four skills, and the license are packaged.
@@ -107,6 +107,9 @@ No ClawMaven tool should be called.
 | 8 | Draft a short cold email introducing my company to a potential customer. | Answered without ClawMaven tools. |
 
 ## Release notes
+
+0.1.2 (2026-10-07): Readiness test cases replaced with the 8 verified ChatGPT
+cases (profile 05dea91f…, agent clawmaven-sender).
 
 0.1.1: Adds terms of service and support URLs, a logo, and enforced listing
 limits (short description shortened to 30 characters). Default prompts, the
