@@ -17,6 +17,8 @@ FILES = ("plugin.json", "mcp.json", "assets/logo.png") + tuple(
 TEXT_LIMITS = {"displayName": 30, "shortDescription": 30, "longDescription": 4000, "developerName": 80}
 URL_FIELDS = ("websiteURL", "supportURL", "privacyPolicyURL", "termsOfServiceURL")
 MCP_URL = "https://clawmaven.com/mcp"
+# Public PKCE client registered in ClawMaven (server/openaiOAuthConfig.ts); it has no secret.
+OAUTH_CLIENT_ID = "clawmaven-openai"
 # Submission rules: no lifecycle hooks, no app references, no credentials in the ZIP.
 FORBIDDEN_TEXT = {
     "lifecycle hook": re.compile(r'"hooks"\s*:|^\s*hooks\s*:', re.M),
@@ -62,9 +64,9 @@ def validate(source):
     if width != height or not 48 <= width <= 4096:
         raise ValueError("Logo must be a square PNG from 48x48 to 4096x4096 pixels")
     mcp = json.loads((source / "mcp.json").read_text())
-    expected = {"clawmaven": {"type": "streamable-http", "url": MCP_URL}}
+    expected = {"clawmaven": {"type": "streamable-http", "url": MCP_URL, "oauth": {"clientId": OAUTH_CLIENT_ID}}}
     if mcp.get("mcpServers") != expected:
-        raise ValueError("Expected only ClawMaven HTTPS server without credentials")
+        raise ValueError("Expected only the ClawMaven HTTPS server with its public OAuth client ID and no credentials")
     if mcp.get("$schema") != "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json":
         raise ValueError("Expected portable MCP schema")
     return manifest
@@ -104,6 +106,9 @@ def audit(archive_path):
             servers = json.loads(archive.read("mcp.json")).get("mcpServers", {})
             if [server.get("url") for server in servers.values()] != [MCP_URL]:
                 problems.append(f"mcp.json must declare only {MCP_URL}")
+            for server in servers.values():
+                if server.get("headers") or set(server.get("oauth", {})) - {"clientId"}:
+                    problems.append("mcp.json may carry only the public OAuth clientId, no headers or client secret")
     if problems:
         raise ValueError("ZIP failed submission audit:\n  " + "\n  ".join(problems))
 

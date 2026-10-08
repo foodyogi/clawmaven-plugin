@@ -5,7 +5,7 @@ import tempfile
 import unittest
 import zipfile
 
-from package_openai import FILES, MCP_URL, REPO, audit, build, default_output
+from package_openai import FILES, MCP_URL, OAUTH_CLIENT_ID, REPO, audit, build, default_output
 
 
 class PackageTests(unittest.TestCase):
@@ -31,6 +31,15 @@ class PackageTests(unittest.TestCase):
         path = self.source / "mcp.json"
         config = json.loads(path.read_text())
         config["mcpServers"]["clawmaven"]["headers"] = {"Authorization": "Bearer test"}
+        path.write_text(json.dumps(config))
+        with self.assertRaises(ValueError):
+            build(self.source, self.output)
+        self.assertFalse(self.output.exists())
+
+    def test_oauth_client_secret_is_rejected(self):
+        path = self.source / "mcp.json"
+        config = json.loads(path.read_text())
+        config["mcpServers"]["clawmaven"]["oauth"]["clientSecret"] = "not-a-real-secret"
         path.write_text(json.dumps(config))
         with self.assertRaises(ValueError):
             build(self.source, self.output)
@@ -106,6 +115,7 @@ class SubmissionAuditTests(unittest.TestCase):
             self.assertFalse([n for n in names if "hook" in n.lower() or n.endswith(".app.json") or n.startswith("apps/")])
             servers = json.loads(archive.read("mcp.json"))["mcpServers"]
             self.assertEqual(servers["clawmaven"]["url"], MCP_URL)
+            self.assertEqual(servers["clawmaven"]["oauth"], {"clientId": OAUTH_CLIENT_ID})
 
     def test_repository_package_is_clean(self):
         _, output = build(REPO / "openai", self.root / "repo.zip")

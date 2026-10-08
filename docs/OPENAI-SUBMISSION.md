@@ -1,4 +1,4 @@
-# OpenAI plugin submission: ClawMaven 0.1.3
+# OpenAI plugin submission: ClawMaven 0.1.4
 
 Paste-ready fields for the OpenAI plugin dashboard
 ([Upload and submit](https://developers.openai.com/plugins/deploy/submission)).
@@ -9,9 +9,10 @@ Values match `openai/plugin.json`. Character counts and URL checks were run on
 
 | Item | Value |
 | --- | --- |
-| ZIP | `dist/clawmaven-openai-0.1.3.zip` |
+| ZIP | `dist/clawmaven-openai-0.1.4.zip` |
 | Rebuild | `scripts/build_openai_zip.sh` (runs the tests, rebuilds the ZIP and icon, audits the ZIP) |
 | MCP server | `https://clawmaven.com/mcp` (Streamable HTTP, OAuth), declared in `mcp.json` |
+| OAuth client | `"oauth": {"clientId": "clawmaven-openai"}` in `mcp.json`: predefined public client, PKCE S256, token auth `none`, no client secret |
 | Contents | `plugin.json`, `mcp.json`, `assets/logo.png`, four `skills/*/SKILL.md`, `LICENSE` |
 | Excluded by audit | lifecycle hooks, `apps/` and `.app.json` references, credentials and secret-like strings |
 
@@ -170,7 +171,7 @@ No ClawMaven tool should be called.
 - prompt: `Draft a short cold email introducing my company to a potential customer.`
 - expected behavior: Writes the email without calling any ClawMaven tool.
 
-## Release notes (0.1.3)
+## Release notes (0.1.4)
 
 ```
 First public release of the ClawMaven plugin. Connects to your saved ClawMaven governance profiles over OAuth to get a profile's posture score and category breakdown, retrieve the effective policy for a named agent, check a run's USD spend against the per-run budget cap with the read-only check_budget_cap, and generate an HMAC-signed trust manifest. Recording monthly spend uses enforce_budget_cap only when you explicitly ask and authorize it. ClawMaven is pre-deployment governance design: it does not monitor agents or enforce policy at runtime.

@@ -1,6 +1,10 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json",
   "mcpServers": {
-    "clawmaven": {"type": "streamable-http", "url": "https://clawmaven.com/mcp"}
+    "clawmaven": {
+      "type": "streamable-http",
+      "url": "https://clawmaven.com/mcp",
+      "oauth": {"clientId": "clawmaven-openai"}
+    }
   }
 }

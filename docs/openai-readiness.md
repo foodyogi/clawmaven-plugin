@@ -1,4 +1,4 @@
-# OpenAI plugin: 0.1.3
+# OpenAI plugin: 0.1.4
 
 ## Status
 
@@ -40,7 +40,7 @@ Python 3.9 or later, without third-party dependencies:
 
 ```sh
 python3 -m unittest discover -s scripts -p 'test_*.py'
-python3 scripts/package_openai.py --output /absolute/output/path/clawmaven-openai-0.1.3.zip
+python3 scripts/package_openai.py --output /absolute/output/path/clawmaven-openai-0.1.4.zip
 ```
 
 Or rebuild `dist/clawmaven-openai-<version>.zip` and the listing icon in one
@@ -115,6 +115,10 @@ No ClawMaven tool should be called.
 | 8 | Draft a short cold email introducing my company to a potential customer. | Answered without ClawMaven tools. |
 
 ## Release notes
+
+0.1.4 (2026-10-08): `mcp.json` declares ClawMaven's predefined public OAuth
+client (`"oauth": {"clientId": "clawmaven-openai"}`, PKCE, no secret) so the
+OpenAI console can save the MCP connection.
 
 0.1.3 (2026-10-08): The budget-check skill uses the read-only `check_budget_cap`
 (ClawMaven 1.10.28) for per-run questions and `enforce_budget_cap` only when the
