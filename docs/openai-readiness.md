@@ -43,6 +43,10 @@ python3 -m unittest discover -s scripts -p 'test_*.py'
 python3 scripts/package_openai.py --output /absolute/output/path/clawmaven-openai-0.1.3.zip
 ```
 
+Or rebuild `dist/clawmaven-openai-<version>.zip` and the listing icon in one
+step with `scripts/build_openai_zip.sh`. Paste-ready listing fields are in
+`docs/OPENAI-SUBMISSION.md`.
+
 Only the two manifests, the logo, four skills, and the license are packaged.
 Extra files and credential-bearing MCP settings are excluded or rejected.
 Existing archives are not overwritten.
@@ -86,8 +90,8 @@ enforces policy at runtime.
 ## Review test cases
 
 These eight cases were run and verified live in ChatGPT with profile
-`05dea91f-bbbe-4ecc-951b-bdca2a0da476` and agent `clawmaven-sender`. Case 5 now
-expects `check_budget_cap` and must be re-run once ClawMaven 1.10.28 is live.
+`05dea91f-bbbe-4ecc-951b-bdca2a0da476` and agent `clawmaven-sender`. Case 5
+expects `check_budget_cap` and was verified live on ClawMaven 1.10.28.
 No case records monthly spend.
 
 ### Positive
@@ -98,7 +102,7 @@ No case records monthly spend.
 | 2 | What is the weakest area of profile `05dea91f-bbbe-4ecc-951b-bdca2a0da476`, and what should I fix first? | `get_posture_score` | Lowest-scoring returned category and its returned fix. |
 | 3 | What tools, blocked domains, and budget caps apply to agent `clawmaven-sender` under profile `05dea91f-bbbe-4ecc-951b-bdca2a0da476`? | `apply_agent_governance` | Returned allowed tools, blocked domains, and budget caps; no claim that enforcement was installed. |
 | 4 | Generate a signed trust manifest for agent `clawmaven-sender` using profile `05dea91f-bbbe-4ecc-951b-bdca2a0da476`. | `generate_trust_manifest` | Signed manifest with issue time and expiry. |
-| 5 | Agent `clawmaven-sender` spent $4.20 on this run under profile `05dea91f-bbbe-4ecc-951b-bdca2a0da476`. Is it within the per-run cap? | `check_budget_cap` | `over_cap` against the $2.00 per-run cap; nothing recorded. **Re-run pending.** |
+| 5 | Agent `clawmaven-sender` spent $4.20 on this run under profile `05dea91f-bbbe-4ecc-951b-bdca2a0da476`. Is it within the per-run cap? | `check_budget_cap` | `over_cap` against the $2.00 per-run cap; nothing recorded. |
 
 ### Negative
 
