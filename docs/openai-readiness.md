@@ -3,7 +3,7 @@
 ## Status
 
 Submission candidate. OAuth account linking is verified end to end in ChatGPT,
-seven of the eight review test cases pass (case 5 re-run pending), and the terms
+all eight review test cases pass (case 5 re-verified live Oct 8 2026 with check_budget_cap), and the terms
 of service and privacy policy are live. Nothing has been submitted to OpenAI yet.
 
 The OpenAI package lives in `openai/`, separate from the Claude and Cursor
@@ -76,7 +76,7 @@ enforces policy at runtime.
 | --- | --- |
 | Remote transport | Ready. `/mcp/info` reports Streamable HTTP and the tools above. |
 | OAuth account linking | Verified live in ChatGPT. Unauthenticated requests return 401 with a `WWW-Authenticate` Bearer challenge pointing to `/.well-known/oauth-protected-resource/mcp`. |
-| Review test cases | 7 of 8 verified live; case 5 re-run pending against `check_budget_cap`. |
+| Review test cases | 8 of 8 verified live; case 5 verified live Oct 8 2026 against `check_budget_cap`. |
 | Terms and privacy | Live: `https://clawmaven.com/terms`, `https://clawmaven.com/privacy`. |
 | Support URL | `https://clawmaven.com/help` (live). |
 | Logo | `assets/logo.png`, 256x256 PNG. |
@@ -115,7 +115,7 @@ No ClawMaven tool should be called.
 0.1.3 (2026-10-08): The budget-check skill uses the read-only `check_budget_cap`
 (ClawMaven 1.10.28) for per-run questions and `enforce_budget_cap` only when the
 user explicitly asks to record monthly spend. Case 5 expects `check_budget_cap`;
-re-run pending.
+verified live Oct 8 2026 (check_budget_cap).
 
 0.1.2 (2026-10-07): Readiness test cases replaced with the 8 verified ChatGPT
 cases (profile 05dea91f…, agent clawmaven-sender).
