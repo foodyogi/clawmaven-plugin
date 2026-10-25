@@ -1,7 +1,7 @@
 {
   "name": "clawmaven",
-  "description": "Pre-deployment AI agent governance — audit configs, score posture, generate trust manifests, and enforce budget caps. Connects to the ClawMaven MCP server.",
-  "version": "1.0.0",
+  "description": "Pre-deployment AI agent governance: audit configs, score posture, generate trust manifests, and check budget caps. Connects to the ClawMaven MCP server.",
+  "version": "1.0.1",
   "author": {
     "name": "Master 22 Solutions",
     "url": "https://clawmaven.com"
