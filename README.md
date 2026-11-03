@@ -6,17 +6,16 @@ ClawMaven governs the AI agents you build, not the coding tool you build them wi
 
 ## Installation
 
-```
-/plugin install clawmaven@claude-plugins-official
-```
+**Claude app:** add ClawMaven from the Claude plugin directory, then connect your ClawMaven account when prompted.
 
-After installing, set your ClawMaven API token in your environment:
+**Claude Code CLI:** load the plugin from this repo, then connect your ClawMaven account when prompted (or run `/mcp`, select `clawmaven` and sign in):
 
 ```bash
-export CLAWMAVEN_TOKEN=your_token_here
+git clone https://github.com/foodyogi/clawmaven-plugin.git
+claude --plugin-dir ./clawmaven-plugin
 ```
 
-Get a token at [clawmaven.com/tokens](https://clawmaven.com/tokens).
+Connecting needs a paid ClawMaven plan (Builder, Team or Enterprise). See [clawmaven.com/pricing](https://clawmaven.com/pricing).
 
 ## Available Skills
 
@@ -36,7 +35,7 @@ This plugin connects Claude Code to the ClawMaven MCP server:
 | Server name | `clawmaven` |
 | Transport | `url` (HTTP/SSE) |
 | Endpoint | `https://clawmaven.com/mcp` |
-| Authentication | Bearer token via `CLAWMAVEN_TOKEN` |
+| Authentication | OAuth — connect your ClawMaven account when prompted |
 
 **Exposed tools:**
 
@@ -50,8 +49,7 @@ The MCP connection is defined in `.mcp.json` at the project root and is loaded a
 ## Requirements
 
 - Claude Code (CLI, desktop app, or IDE extension)
-- A ClawMaven account and API token ([clawmaven.com](https://clawmaven.com))
-- `CLAWMAVEN_TOKEN` set in your shell environment
+- A paid ClawMaven plan ([clawmaven.com/pricing](https://clawmaven.com/pricing)); connect your ClawMaven account when prompted
 
 ## Learn More
 

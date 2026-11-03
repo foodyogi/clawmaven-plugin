@@ -1,6 +1,6 @@
 ---
 description: Audit an AI agent's governance configuration against ClawMaven standards
-allowed-tools: [Read, Glob, Grep, mcp__clawmaven__*]
+allowed-tools: [Read, Glob, Grep, mcp__plugin_clawmaven_clawmaven__*]
 ---
 
 ## Instructions
@@ -21,7 +21,7 @@ When this skill is invoked, perform a full governance audit of the current proje
    - **Tool access scope** — Are tool permissions least-privilege? Flag overly broad permissions.
    - **Authentication** — Are all MCP server connections authenticated? Flag unauthenticated connections.
 
-3. **Call the ClawMaven MCP tool** `apply_agent_governance` with the extracted config and gap list.
+3. **Call the ClawMaven MCP tool** `mcp__plugin_clawmaven_clawmaven__apply_agent_governance` with the extracted config and gap list.
 
 4. **Present findings** in this format:
    - Overall governance status (PASS / WARN / FAIL)
@@ -30,3 +30,5 @@ When this skill is invoked, perform a full governance audit of the current proje
    - A next-step prompt: "Run `/clawmaven:posture-score` to get your A-F grade, or `/clawmaven:trust-manifest` to generate a deployment manifest."
 
 Do not modify any project files during the audit — this skill is read-only. Surface all findings as structured output in the conversation.
+
+If the ClawMaven MCP server is not connected, surface a clear error: "Connect your ClawMaven account when prompted (in Claude Code, run /mcp and sign in to clawmaven). Connecting needs a paid plan: https://clawmaven.com/pricing"

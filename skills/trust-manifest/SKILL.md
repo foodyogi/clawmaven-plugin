@@ -1,6 +1,6 @@
 ---
 description: Generate a signed trust manifest for an AI agent deployment
-allowed-tools: [Read, Glob, Grep, mcp__clawmaven__*]
+allowed-tools: [Read, Glob, Grep, mcp__plugin_clawmaven_clawmaven__*]
 ---
 
 ## Instructions
@@ -14,7 +14,7 @@ When this skill is invoked, generate a ClawMaven trust manifest for the current 
    - **Risk profile**: tool count, presence of destructive actions (write, delete, execute, deploy), external network access, authentication gaps
    - **Governance controls**: budget caps, approval gates, memory policy, audit logging — present or absent
 
-2. **Call the ClawMaven MCP tool** `generate_trust_manifest` with the assembled profile:
+2. **Call the ClawMaven MCP tool** `mcp__plugin_clawmaven_clawmaven__generate_trust_manifest` with the assembled profile:
    ```json
    {
      "agent": {
@@ -33,7 +33,7 @@ When this skill is invoked, generate a ClawMaven trust manifest for the current 
 
 4. **Present a summary** of the manifest contents:
    - Manifest ID and timestamp
-   - Signing status (signed / unsigned — depends on CLAWMAVEN_TOKEN scope)
+   - Signing status (signed / unsigned — depends on the connected ClawMaven plan)
    - Risk tier (LOW / MEDIUM / HIGH / CRITICAL)
    - List of declared tool and data access scopes
    - Governance controls attested
@@ -43,4 +43,4 @@ When this skill is invoked, generate a ClawMaven trust manifest for the current 
    - Re-generate after any change to tool definitions, permissions, or governance config
    - Link to clawmaven.com for manifest verification and registry lookup
 
-If `CLAWMAVEN_TOKEN` is not set, surface a clear error: "Set CLAWMAVEN_TOKEN in your environment to authenticate with the ClawMaven MCP server. Get a token at https://clawmaven.com/tokens"
+If the ClawMaven MCP server is not connected, surface a clear error: "Connect your ClawMaven account when prompted (in Claude Code, run /mcp and sign in to clawmaven). Connecting needs a paid plan: https://clawmaven.com/pricing"

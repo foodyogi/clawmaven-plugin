@@ -1,12 +1,13 @@
 {
   "name": "clawmaven",
   "description": "Pre-deployment AI agent governance: audit configs, score posture, generate trust manifests, and check budget caps. Connects to the ClawMaven MCP server.",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "author": {
     "name": "Master 22 Solutions",
     "url": "https://clawmaven.com"
   },
   "homepage": "https://clawmaven.com/plugins/claude-code",
   "repository": "https://github.com/foodyogi/clawmaven-plugin",
-  "license": "MIT"
+  "license": "MIT",
+  "privacyPolicyUrl": "https://clawmaven.com/privacy"
 }

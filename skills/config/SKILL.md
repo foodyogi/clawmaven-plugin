@@ -1,6 +1,6 @@
 ---
 description: Automatically detect governance gaps when working on AI agent code
-allowed-tools: [Read, Glob, Grep, mcp__clawmaven__*]
+allowed-tools: [Read, Glob, Grep, mcp__plugin_clawmaven_clawmaven__*]
 ---
 
 ## Instructions
@@ -23,7 +23,7 @@ This skill is model-invoked and runs contextually without a slash command. Do no
 - Is a memory or data retention policy declared?
 
 **How to surface findings** — integrate naturally, not as interruptions:
-- When editing a config file and you spot a gap, mention it in the same response: "Note: this MCP connection has no authentication — consider adding a bearer token via `CLAWMAVEN_TOKEN`."
+- When editing a config file and you spot a gap, mention it in the same response: "Note: this MCP connection has no authentication — consider adding authentication (OAuth or a bearer token)."
 - When reviewing agent code and a gap is obvious, add a single-line callout after your main answer.
 - Never block the developer's primary task. One concise observation per gap, at most one or two per response.
 - If multiple gaps exist, surface the highest-severity one and note "Run `/clawmaven:governance-audit` for a full gap report."

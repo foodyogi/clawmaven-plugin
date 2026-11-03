@@ -1,4 +1,6 @@
-# ClawMaven Plugin — Developer Guide
+# Contributing to the ClawMaven Plugin
+
+Contributor notes only. Claude Code does not load this file into a user's session (a `CLAUDE.md` at the plugin root isn't loaded either, and `claude plugin validate` warns about one), so anything a user's Claude session needs belongs in the relevant `skills/*/SKILL.md`.
 
 ## What this repo is
 
@@ -38,21 +40,21 @@ Skills are markdown files that Claude Code executes as instructions. Each `SKILL
 
 ## MCP server
 
-The plugin connects to `https://clawmaven.com/mcp` via HTTP/SSE with Bearer auth (`CLAWMAVEN_TOKEN`). Four tools are exposed:
+The plugin connects to `https://clawmaven.com/mcp` via HTTP/SSE with OAuth: the client prompts the user to connect their ClawMaven account. There is no token environment variable and `.mcp.json` / `mcp.json` must not set an `Authorization` header (a configured header stops Claude Code from using OAuth). Four tools are exposed:
 
 - `get_posture_score`
 - `apply_agent_governance`
 - `enforce_budget_cap`
 - `generate_trust_manifest`
 
-Skills reference these as `mcp__clawmaven__*` in `allowed-tools`.
+Plugin-provided MCP tools are named `mcp__plugin_<plugin>_<server>__<tool>`, so skills reference these as `mcp__plugin_clawmaven_clawmaven__*` in `allowed-tools` (plugin `clawmaven`, server `clawmaven`).
 
 ## Key constraints
 
 - All audit skills are **read-only** — they never modify project files.
 - The `config` skill must not call MCP tools automatically; it surfaces findings inline without blocking the user's primary task.
 - `trust-manifest` writes `trust-manifest.json` but must confirm the save location with the user first.
-- If `CLAWMAVEN_TOKEN` is unset, surface a clear error with the token URL rather than failing silently.
+- If the ClawMaven server is not connected, tell the user to connect their ClawMaven account when prompted (in Claude Code: run `/mcp` and sign in), and point to https://clawmaven.com/pricing for plans, rather than failing silently.
 
 ## CI / workflow conventions
 
@@ -61,7 +63,7 @@ Full details in `docs/security/github-actions-hardening.md`. The rules that appl
 - Pin every action to a full commit SHA with a trailing `# vX.Y.Z` comment (Dependabot reads it — don't drop it). zizmor fails CI on unpinned `uses:`.
 - Set `permissions: contents: read` at the top of every workflow; opt in per-job only when needed.
 - Use `on: pull_request`, never `pull_request_target`.
-- `CLAWMAVEN_TOKEN` is a user-side editor secret — it must never appear in GitHub Actions secrets or be referenced by any workflow.
+- No ClawMaven credential belongs in GitHub Actions secrets or any workflow; users sign in through OAuth in their editor.
 
 ## Positioning
 

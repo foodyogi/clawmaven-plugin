@@ -8,7 +8,7 @@ The plugin itself is just markdown skills and JSON manifests — there is no bui
 
 ## 1. zizmor — static analysis for workflows
 
-[`zizmor`](https://github.com/zizmorcore/zizmor) is a security linter for GitHub Actions. It catches the common foot-guns: `pull_request_target` with checkout of PR code, `${{ }}` expressions interpolated into shell scripts (template injection), workflows that hand out `write-all` permissions, credentials persisted into `.git/config`, and so on.
+[`zizmor`](https://github.com/zizmorcore/zizmor) is a security linter for GitHub Actions. It catches the common foot-guns: `pull_request_target` with checkout of PR code, workflow expressions interpolated into shell scripts (template injection), workflows that hand out `write-all` permissions, credentials persisted into `.git/config`, and so on.
 
 It is wired into `.github/workflows/zizmor.yml` and runs on:
 
@@ -106,8 +106,8 @@ The zizmor workflow uses `on: pull_request`, **not** `pull_request_target`. The 
 Other secret-handling rules for this repo:
 
 - Default every workflow to `permissions: contents: read` at the top of the file. Opt in per-job when you genuinely need more.
-- Never echo `${{ secrets.* }}` into a shell — GitHub's masking is best-effort and breaks for multi-line or partially-quoted values.
-- The plugin's runtime secret, `CLAWMAVEN_TOKEN`, is a *user* environment variable that runs inside the editor. It does **not** belong in this repo's GitHub Actions secrets and no workflow here should reference it.
+- Never echo a `secrets.*` expression into a shell — GitHub's masking is best-effort and breaks for multi-line or partially-quoted values.
+- The plugin has no runtime secret: users connect their ClawMaven account through OAuth inside the editor. No ClawMaven credential belongs in this repo's GitHub Actions secrets and no workflow here should reference one.
 
 ---
 

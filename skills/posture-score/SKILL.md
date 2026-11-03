@@ -1,6 +1,6 @@
 ---
 description: Score the governance posture of an AI agent project
-allowed-tools: [Read, Glob, Grep, mcp__clawmaven__*]
+allowed-tools: [Read, Glob, Grep, mcp__plugin_clawmaven_clawmaven__*]
 ---
 
 ## Instructions
@@ -12,7 +12,7 @@ When this skill is invoked, compute and present a ClawMaven posture score for th
    - Extract: tool count, permission scope, budget constraints, authentication methods, logging config, approval gate definitions, memory retention settings
    - Note the project name and inferred deployment environment (dev / staging / prod) from config or directory context
 
-2. **Call the ClawMaven MCP tool** `get_posture_score` with the collected inputs as a structured payload:
+2. **Call the ClawMaven MCP tool** `mcp__plugin_clawmaven_clawmaven__get_posture_score` with the collected inputs as a structured payload:
    ```json
    {
      "project": "<name>",
@@ -54,3 +54,5 @@ When this skill is invoked, compute and present a ClawMaven posture score for th
    - D/F: "Critical governance issues detected. Run `/clawmaven:governance-audit` immediately before deploying."
 
 This skill is read-only — do not modify any project files.
+
+If the ClawMaven MCP server is not connected, surface a clear error: "Connect your ClawMaven account when prompted (in Claude Code, run /mcp and sign in to clawmaven). Connecting needs a paid plan: https://clawmaven.com/pricing"

@@ -2,10 +2,7 @@
   "mcpServers": {
     "clawmaven": {
       "type": "http",
-      "url": "https://clawmaven.com/mcp",
-      "headers": {
-        "Authorization": "Bearer ${CLAWMAVEN_TOKEN}"
-      }
+      "url": "https://clawmaven.com/mcp"
     }
   }
 }
