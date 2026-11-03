@@ -1,0 +1,32 @@
+# Dependabot config — keeps the SHA-pinned actions in .github/workflows
+# fresh so the pins don't silently drift.
+#
+# How this interacts with the SHA-pinning policy in
+# docs/security/github-actions-hardening.md §6:
+# Dependabot updates the SHA on each `uses:` line but can leave the
+# trailing `# vX.Y.Z` comment stale (see dependabot-core#14716). Verify
+# the SHA and the version comment in every Dependabot PR before merging
+# — the §6 action-pinning policy requires both to be in sync.
+#
+# zizmor runs on every pull_request, including Dependabot's, so an
+# unpinned update would fail CI the same way a human-authored one would.
+
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    cooldown:
+      # Wait at least 7 days after a release before proposing it. Closes the
+      # "ten-minutes-after-publish" supply-chain window on github-actions,
+      # the Dependabot-side analogue of pnpm's minimum-release-age in
+      # docs/security/github-actions-hardening.md §2. Satisfies zizmor's
+      # dependabot-cooldown audit.
+      default-days: 7
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: ci
+    labels:
+      - dependencies
+      - github-actions
