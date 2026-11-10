@@ -1,6 +1,6 @@
 ---
 description: Generate a signed trust manifest for an AI agent deployment
-allowed-tools: [Read, Glob, Grep, mcp__plugin_clawmaven_clawmaven__*]
+allowed-tools: [Read, Glob, Grep]
 ---
 
 ## Instructions

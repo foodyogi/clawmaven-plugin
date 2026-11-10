@@ -1,6 +1,6 @@
 ---
 description: Audit an AI agent's governance configuration against ClawMaven standards
-allowed-tools: [Read, Glob, Grep, mcp__plugin_clawmaven_clawmaven__*]
+allowed-tools: [Read, Glob, Grep]
 ---
 
 ## Instructions

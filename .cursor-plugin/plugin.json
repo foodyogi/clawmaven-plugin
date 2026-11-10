@@ -1,6 +1,6 @@
 {
   "name": "clawmaven",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Audit, score, and validate AI agent governance before deployment. Checks for missing approval gates, uncapped budgets, unauthenticated tools, and absent audit logging; generates signed trust manifests.",
   "author": {
     "name": "Master 22 Solutions",

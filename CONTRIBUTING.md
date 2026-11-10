@@ -29,6 +29,7 @@ The Claude and Cursor manifests are parallel surfaces: a version bump or descrip
 There is no build, test runner, or package manager — the plugin is markdown skills plus JSON manifests. Useful checks:
 
 - Validate a manifest after editing: `python3 -m json.tool < .mcp.json`
+- Check skill `allowed-tools` lists (Read/Grep/Glob/LS only): `python3 scripts/check-allowed-tools.py`
 - Lint workflows locally (same rules as CI): `pipx install zizmor && zizmor .github/workflows/`
 
 ## Skills
@@ -47,7 +48,7 @@ The plugin connects to `https://clawmaven.com/mcp` via HTTP/SSE with OAuth: the 
 - `enforce_budget_cap`
 - `generate_trust_manifest`
 
-Plugin-provided MCP tools are named `mcp__plugin_<plugin>_<server>__<tool>`, so skills reference these as `mcp__plugin_clawmaven_clawmaven__*` in `allowed-tools` (plugin `clawmaven`, server `clawmaven`).
+Plugin-provided MCP tools are named `mcp__plugin_<plugin>_<server>__<tool>`, so skill instructions call them as `mcp__plugin_clawmaven_clawmaven__*` (plugin `clawmaven`, server `clawmaven`). They are not listed in `allowed-tools`: the Claude plugin directory accepts only `Read`, `Grep`, `Glob` and `LS` there from unverified organizations, so MCP calls go through the normal user permission prompt. `python3 scripts/check-allowed-tools.py` enforces this.
 
 ## Key constraints
 

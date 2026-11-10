@@ -1,6 +1,6 @@
 ---
 description: Automatically detect governance gaps when working on AI agent code
-allowed-tools: [Read, Glob, Grep, mcp__plugin_clawmaven_clawmaven__*]
+allowed-tools: [Read, Glob, Grep]
 ---
 
 ## Instructions

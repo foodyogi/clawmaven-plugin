@@ -1,6 +1,6 @@
 ---
 description: Score the governance posture of an AI agent project
-allowed-tools: [Read, Glob, Grep, mcp__plugin_clawmaven_clawmaven__*]
+allowed-tools: [Read, Glob, Grep]
 ---
 
 ## Instructions
